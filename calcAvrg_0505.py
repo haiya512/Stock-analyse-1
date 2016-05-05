@@ -1,21 +1,26 @@
 ## 计算4条均线
 import os
+import collections
 
-class unit(object):
+path_data_origin = "原始数据\\"
+path_data_avg = "均值整理数据\\"
+
+'''class unit(object):
     def __init__(self, opn, cls, high, low):
         self.opn = opn
         self.cls = cls
         self.high = high
         self.low = low
+'''
 
-datamap = {}
+datamap = collections.OrderedDict()
 
 def Avg_proc(file):
 
     datamap.clear()
     day = 0
 
-    with open(file, 'r') as f:
+    with open(path_data_origin + file, 'r') as f:
         head = f.readline()
         for line in f.readlines():
             strlist = line.split('\t')  # 用tab分割字符串，并保存到列表
@@ -56,7 +61,7 @@ def Avg_proc(file):
     #end of "for"
             
     head2 = "时间\t开盘\t最高\t最低\t收盘\t总手\t金额\t换手%\tavg5\tavg10\tavg20\tavg30\tavg60\n"
-    with open(file[:-4]+"_avg.txt",'w') as out:
+    with open(path_data_avg + file[:-4]+"_avg.txt",'w') as out:
         out.write(head2)
         for key in datamap:
             if key >= 60:
@@ -66,15 +71,14 @@ def Avg_proc(file):
     #end of "with"
 #end of "Avg_proc()"
 
-                
+
+#main()
 #获取*.txt，并遍历
-files = os.listdir()
+files = os.listdir(path_data_origin)
 
 for file in files:
     if file.find(".txt") > 0 or file.find(".TXT") > 0:
-        if file.find('_avg') > 0:
-            continue
-        else:
+        if len(file) == 10:
             print(file)
             Avg_proc(file)
 #end of "for"

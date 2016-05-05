@@ -1,18 +1,15 @@
 # -*- coding: gbk -*-
 
-path_rule_rst = '规则分析结果'
-#sys.path.append(path_rule_rst)
-path_avg_data = '均值整理数据'
-#sys.path.append(path_avg_data)
+path_rule_rst = '规则分析结果\\'
+path_data_avg = '均值整理数据\\'
 
-file = "002154_avg.txt"
+#code = "002234"
 
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import collections
-import sys
-
+import os
 
 Outmap = collections.OrderedDict()  
 rules = []
@@ -22,13 +19,13 @@ Anlyoutmap = collections.OrderedDict()
 
 
 '''读取基本K线数据'''
-def mdl_read():
+def mdl_read(code):
     Outmap.clear()
     Anlyinmap.clear()
 
     ##打开K线文件，数据按key并入Outmap
     ##研究标的的日期为key
-    with open(path_avg_data + '\\' + file, 'r') as f:
+    with open(path_data_avg + code + "_avg.txt", 'r') as f:
         head = f.readline()
         for line in f.readlines():
             strlist = line.split('\t')  # 用tab分割字符串，并保存到列表
@@ -52,7 +49,7 @@ def mdl_read():
 
 
 '''读取rules'''
-def mdl_ruleget():
+def mdl_ruleget(code):
     #初步定为采用 字符串数组对应的函数名数组
     
     if 1==1:
@@ -62,7 +59,7 @@ def mdl_ruleget():
 #end of "def"
 
 
-def rule_2():
+def rule_2(code):
     收pre = 0
     开 = 0
     收 = 0
@@ -84,7 +81,7 @@ def rule_2():
     #end of "for"
 
     head = "出现日期\t规则ID\t规则名称\n"
-    with open(path_rule_rst + '\\' + file[:6] + "_rule2.txt", 'w') as out:
+    with open(path_rule_rst + code + "_rule2.txt", 'w') as out:
         out.write(head)
         for (d,x) in Anlyoutmap.items():
             tmpstr = d + "\t" + "\t".join(str(i) for i in x) + "\n"
@@ -94,7 +91,7 @@ def rule_2():
 #end of "def"
 
     
-def rule_1():
+def rule_1(code):
     Anlyoutmap.clear()
     for (d,x) in Anlyinmap.items():
         开 = x['基K'][0]
@@ -112,7 +109,7 @@ def rule_1():
     #end of "for"
 
     head = "出现日期\t规则ID\t规则名称\n"
-    with open(path_rule_rst + '\\' + file[:6] + "_rule1.txt", 'w') as out:
+    with open(path_rule_rst + code + "_rule1.txt", 'w') as out:
         out.write(head)
         for (d,x) in Anlyoutmap.items():
             tmpstr = d + "\t" + "\t".join(str(i) for i in x) + "\n"
@@ -123,14 +120,25 @@ def rule_1():
 
 
 '''进行数据分析'''
-def mdl_ruleanlys():
-    rule_1()
-    rule_2()
+def mdl_ruleanlys(code):
+    rule_1(code)
+    rule_2(code)
 #end of "def"
 
 
 #main()
-mdl_read()
-mdl_ruleget()
-mdl_ruleanlys()
+#获取*.txt，并遍历
+files = os.listdir(path_data_avg)
+for file in files:
+    if file.find("_avg.txt") > 0 or file.find("_avg.TXT") > 0:
+        if len(file) == 14:
+            code = file[:6]
+            mdl_read(code)
+            mdl_ruleget(code)
+            mdl_ruleanlys(code)
+            print(file)
+#end of "for"
+print("rules分析完毕！\n")
+
+
 
