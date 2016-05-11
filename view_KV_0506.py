@@ -45,8 +45,11 @@ def read_rule_n_rst(rule_rst_file):
         head = f.readline()
         for line in f.readlines():
             strlist = line.split('\t')  # 用tab分割字符串，并保存到列表
-            if(strlist[0] in viewfileoutmap):
-                viewfileoutmap[strlist[0]]['分析结果'] = {strlist[1]: strlist[2]}
+            if(strlist[0] in viewfileoutmap):   #日期存在
+                if '分析结果' in viewfileoutmap[strlist[0]]:    #已经存在结果数据，那么需要新增
+                    viewfileoutmap[strlist[0]]['分析结果'][strlist[1]] = strlist[2]
+                else:
+                    viewfileoutmap[strlist[0]]['分析结果'] = {strlist[1]: strlist[2]}
         #end of "for"
     #end of "with"
 #end of "def"
@@ -67,13 +70,12 @@ def mdl_datafill(code):
         for line in f.readlines():
             strlist = line.split('\t')  # 用tab分割字符串，并保存到列表
             viewfileoutmap[strlist[0]] = {'基K':[float(strlist[1]), float(strlist[2]), float(strlist[3]), float(strlist[4])], \
-                                  'V':[int(strlist[5]), int(strlist[6]), float(strlist[7])], \
-                                  '均':[float(strlist[8]), float(strlist[9]), float(strlist[10]), float(strlist[11]), \
-                                       float(strlist[12])]}
+                                          'V':[int(strlist[5]), int(strlist[6]), float(strlist[7])], \
+                                          '均':[float(strlist[8]), float(strlist[9]), float(strlist[10]), float(strlist[11]), \
+                                               float(strlist[12])]}
             day = day + 1
         #end of "for"
     #end of "with"
-
 
     ##打开rule分析结果文件，数据按key并入viewfileoutmap
     ##研究标的的日期为key
@@ -156,10 +158,12 @@ def mdl_view():
                 #画矩形
                 squal_x = [xpos[i], xpos[i], xpos[i] + xstep*10, xpos[i] + xstep*10, xpos[i]]
                 squal_y = [开盘, 开盘*1.2, 开盘*1.2, 开盘, 开盘]
-                ruleID = x2[1][-1:]
-                plt.plot(squal_x, squal_y, '-', alpha = 0.8, color = 'r')
+                ruleID = x2[4:5]
+                plt.plot(squal_x, squal_y, '-', alpha = 0.3, color = 'r')
                 #写文字
-                ax.text(xpos[i], 开盘*1.2, d2+' '+x2, alpha = 0.8, color = 'r', fontsize = 5)
+                ax.text(xpos[i], 开盘*1.2, d2+' '+x2, alpha = 0.3, color = 'r', fontsize = 5)
+                #ruleID
+                ax.text(xpos[i]+(int(ruleID)-1)*0.7, 开盘*1.15, '('+ruleID+')', color = 'g', fontsize = 8)
             #end of "for"
         #end of "if"       
         i = i + 1
@@ -236,14 +240,16 @@ def mdl_sub_view(submap):
                 #画矩形
                 squal_x = [xpos[i], xpos[i], xpos[i] + xstep*10, xpos[i] + xstep*10, xpos[i]]
                 squal_y = [开盘, 开盘*1.2, 开盘*1.2, 开盘, 开盘]
-                ruleID = x2[1][-1:]
-                plt.plot(squal_x, squal_y, '-', alpha = 0.8, color = 'r')
+                ruleID = x2[4:5]
+                plt.plot(squal_x, squal_y, '-', alpha = 0.3, color = 'r')
                 #写文字
-                ax.text(xpos[i], 开盘*1.2, d2+' '+x2, alpha = 0.8, color = 'r', fontsize = 8)
+                ax.text(xpos[i], 开盘*1.2, d2+' '+x2, alpha = 0.3, color = 'r', fontsize = 8)
+                #ruleID
+                ax.text(xpos[i]+(int(ruleID)-1)*0.7, 开盘*1.15, '('+ruleID+')', color = 'g', fontsize = 8)
             #end of "for"
         #end of "if"       
         i = i + 1
-#end of "def"    
+#end of "def"
 
 def mdl_sub_view_mng(code):
     i=0
@@ -255,42 +261,8 @@ def mdl_sub_view_mng(code):
     cnt_rule_pic = 0
     for (d, x) in tmpmap.items():
         if  '分析结果' in x[1]:
-            submap[tmpmap[d-10][0]] = tmpmap[d-10][1]
-            submap[tmpmap[d-9][0]] = tmpmap[d-9][1]
-            submap[tmpmap[d-8][0]] = tmpmap[d-8][1]
-            submap[tmpmap[d-7][0]] = tmpmap[d-7][1]
-            submap[tmpmap[d-6][0]] = tmpmap[d-6][1]
-            submap[tmpmap[d-5][0]] = tmpmap[d-5][1]
-            submap[tmpmap[d-4][0]] = tmpmap[d-4][1]
-            submap[tmpmap[d-3][0]] = tmpmap[d-3][1]
-            submap[tmpmap[d-2][0]] = tmpmap[d-2][1]
-            submap[tmpmap[d-1][0]] = tmpmap[d-1][1]
-            submap[tmpmap[d-0][0]] = tmpmap[d-0][1]
-            submap[tmpmap[d+1][0]] = tmpmap[d+1][1]
-            submap[tmpmap[d+2][0]] = tmpmap[d+2][1]
-            submap[tmpmap[d+3][0]] = tmpmap[d+3][1]
-            submap[tmpmap[d+4][0]] = tmpmap[d+4][1]
-            submap[tmpmap[d+5][0]] = tmpmap[d+5][1]
-            submap[tmpmap[d+6][0]] = tmpmap[d+6][1]
-            submap[tmpmap[d+7][0]] = tmpmap[d+7][1]
-            submap[tmpmap[d+8][0]] = tmpmap[d+8][1]
-            submap[tmpmap[d+9][0]] = tmpmap[d+9][1]
-            submap[tmpmap[d+10][0]] = tmpmap[d+10][1]
-            submap[tmpmap[d+11][0]] = tmpmap[d+11][1]
-            submap[tmpmap[d+12][0]] = tmpmap[d+12][1]
-            submap[tmpmap[d+13][0]] = tmpmap[d+13][1]
-            submap[tmpmap[d+14][0]] = tmpmap[d+14][1]
-            submap[tmpmap[d+15][0]] = tmpmap[d+15][1]
-            submap[tmpmap[d+16][0]] = tmpmap[d+16][1]
-            submap[tmpmap[d+17][0]] = tmpmap[d+17][1]
-            submap[tmpmap[d+18][0]] = tmpmap[d+18][1]
-            submap[tmpmap[d+19][0]] = tmpmap[d+19][1]
-            submap[tmpmap[d+20][0]] = tmpmap[d+20][1]
-            submap[tmpmap[d+21][0]] = tmpmap[d+21][1]
-            submap[tmpmap[d+22][0]] = tmpmap[d+22][1]
-            submap[tmpmap[d+23][0]] = tmpmap[d+23][1]
-            submap[tmpmap[d+24][0]] = tmpmap[d+24][1]
-            submap[tmpmap[d+25][0]] = tmpmap[d+25][1]
+            for j in range(-20,50):
+                submap[tmpmap[d+j][0]] = tmpmap[d+j][1]
             
             mdl_sub_view(submap)
             cnt_rule_pic = cnt_rule_pic + 1
@@ -318,6 +290,8 @@ for file in files:
             #plt.show()
             #显示满足规则的子图
             mdl_sub_view_mng(code)
+            #按照最佳组合、或者一天同时出现多种入了满足时，星号标记
+            ##############################mdl_view_ring()
 #end of "for"
 print("画图完毕！\n")
 
